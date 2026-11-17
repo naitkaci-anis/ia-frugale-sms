@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt ou pas prompt ?</title>
+<style>
+
+:root{
+  --ink:#20352d;--muted:#718078;--green:#315c49;--green-dark:#244638;
+  --mint:#e8f1e9;--paper:#f7f8f3;--line:#e2e9e1;--white:#fff;
+  --yellow:#f5d77b;--pink:#f4d9d3;--shadow:0 16px 45px rgba(35,65,49,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 8%,rgba(211,230,210,.65),transparent 25rem),
+    radial-gradient(circle at 95% 88%,rgba(245,215,123,.22),transparent 22rem),
+    var(--paper);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.6;
+}
+button{font:inherit}
+main{width:min(100% - 32px,680px);margin:0 auto;padding:42px 0 56px}
+[hidden]{display:none!important}
+.carte{
+  position:relative;background:rgba(255,255,255,.94);
+  border:1px solid var(--line);border-radius:24px;padding:clamp(22px,5vw,34px);
+  margin-bottom:16px;box-shadow:var(--shadow);
+}
+#accueil{overflow:hidden;padding:clamp(28px,7vw,48px)}
+#accueil:after{
+  content:"✳";position:absolute;right:28px;top:55px;color:var(--yellow);
+  font-size:clamp(70px,14vw,120px);line-height:1;transform:rotate(12deg);
+  opacity:.9;pointer-events:none
+}
+.petit{font-size:.88rem;color:var(--muted);margin:0 0 12px}
+.surtitre{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 12px;
+  border-radius:999px;background:var(--mint);color:var(--green);
+  font-size:.78rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase
+}
+h1{max-width:480px;margin:24px 0 16px;font-size:clamp(2.5rem,8vw,4.2rem);line-height:.99;letter-spacing:-.065em;color:var(--green-dark)}
+h1 span{color:#88a58d}
+h2{margin:0 0 14px;font-size:clamp(1.25rem,4vw,1.55rem);line-height:1.25;letter-spacing:-.025em}
+p{margin:0 0 14px}
+.intro{max-width:470px;font-size:1.06rem;color:#53645a}
+.meta{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0}
+.meta span{padding:7px 11px;border:1px solid var(--line);border-radius:999px;font-size:.82rem;color:var(--muted);background:#fff}
+.bouton{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  border:0;border-radius:14px;padding:14px 21px;background:var(--green);
+  color:#fff;font-weight:750;cursor:pointer;box-shadow:0 7px 16px rgba(49,92,73,.18);
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease
+}
+.bouton:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 10px 22px rgba(49,92,73,.22)}
+.bouton:active{transform:translateY(0)}
+.bouton:focus-visible,.reponse:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.note{max-width:500px;margin-top:20px;font-size:.82rem}
+.entete{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 4px 12px;font-size:.88rem;font-weight:750}
+#score{color:var(--green)}
+.barre{height:9px;background:#e5ece4;border-radius:99px;overflow:hidden;margin:0 4px 18px}
+.barre div{width:0;height:100%;background:linear-gradient(90deg,#719779,#315c49);border-radius:99px;transition:width .35s ease}
+.type{display:inline-flex;margin:0 0 15px;padding:6px 10px;background:#f2f5ef;border-radius:8px;color:var(--green);font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+#question{max-width:560px;margin-bottom:22px;font-size:clamp(1.35rem,4vw,1.8rem)}
+.reponse{
+  display:flex;align-items:center;gap:13px;width:100%;margin:10px 0;padding:15px 16px;
+  background:#fff;border:1.5px solid var(--line);border-radius:15px;color:var(--ink);
+  text-align:left;cursor:pointer;transition:border-color .16s,background .16s,transform .16s
+}
+.reponse:before{
+  content:"";flex:0 0 19px;width:19px;height:19px;border:1.5px solid #c5d2c6;
+  border-radius:50%;background:#fff
+}
+.reponse:hover:enabled{border-color:#78977e;background:#f8fbf7;transform:translateY(-1px)}
+.reponse:disabled{cursor:default}
+.reponse.bonne{background:#edf6ed;border-color:#70a078}
+.reponse.bonne:before{content:"✓";display:grid;place-items:center;background:#4f805b;border-color:#4f805b;color:white;font-size:12px;font-weight:900}
+.reponse.fausse{background:#fff2ef;border-color:#d99587}
+.reponse.fausse:before{content:"×";display:grid;place-items:center;background:#c97969;border-color:#c97969;color:white;font-size:15px;font-weight:900}
+.etiquette{display:block;margin-left:auto;font-size:.75rem;font-weight:800;color:var(--green)}
+.retour{border-left:5px solid #7fa184}
+.retour h2{margin-bottom:10px}
+#explication{color:#53645a}
+#source{margin-top:14px}
+.score{margin:4px 0 0;font-size:clamp(3.5rem,12vw,5rem);font-weight:850;line-height:1;letter-spacing:-.07em;color:var(--green)}
+.profil{background:var(--mint);border-color:#d6e5d7}
+.profil h2{color:var(--green-dark)}
+ol{margin:0;padding-left:22px}
+li{margin:0 0 12px;padding-left:4px}
+li::marker{color:#6f9276;font-weight:800}
+#resultat .carte:last-of-type{background:#fffdf6}
+summary{font-weight:750;cursor:pointer;color:var(--green)}
+.sources{margin:14px 0 0;padding-left:20px;font-size:.88rem}
+.sources a{color:var(--green);text-underline-offset:3px}
+.footer{text-align:center;margin:20px 0 0;font-size:.82rem;color:var(--muted)}
+@media(max-width:520px){
+  main{width:min(100% - 22px,680px);padding:20px 0 36px}
+  #accueil:after{right:16px;top:34px;font-size:65px;opacity:.55}
+  .carte{border-radius:19px}
+  .entete{font-size:.82rem}
+  .reponse{padding:13px}
+  .etiquette{font-size:.68rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
+</style>
+</head>
+<body>
+<main>
+
+  <section id="accueil" class="carte">
+      <span class="surtitre">✦ Quiz · IA frugale</span>
+      <h1>Prompt<br>ou pas <span>prompt&nbsp;?</span></h1>
+      <p class="intro">On utilise l’IA pour chercher, écrire ou créer. Mais est-ce toujours le meilleur outil&nbsp;?</p>
+      <p>8 petites questions pour tester tes réflexes et découvrir ce qui se cache derrière nos usages.</p>
+      <div class="meta"><span>◷ 2 minutes</span><span>♡ Anonyme</span><span>✦ 8 questions</span></div>
+      <button class="bouton" id="demarrer" type="button">C’est parti <span aria-hidden="true">→</span></button>
+      <p class="petit note">Les chiffres viennent d’études et de sources publiées. Notre projet ne mesure pas ChatGPT : il compare 3 petites IA qui tournent sur notre propre PC.</p>
+    </section>
+
+  <section id="jeu" hidden>
+    <div class="entete">
+      <span id="numero">Question 1/8</span>
+      <span id="score">Score : 0</span>
+    </div>
+    <div class="barre"><div id="avance"></div></div>
+    <div class="carte">
+      <p class="type" id="type"></p>
+      <h2 id="question"></h2>
+      <div id="reponses"></div>
+    </div>
+    <div class="carte retour" id="retour" hidden>
+      <h2 id="reaction"></h2>
+      <p id="explication"></p>
+      <p class="petit" id="source"></p>
+      <button class="bouton" id="suivant" type="button">Question suivante</button>
+    </div>
+  </section>
+
+  <section id="resultat" hidden>
+    <div class="carte">
+      <p class="surtitre">Ton résultat</p>
+      <p class="score"><span id="score-final">0</span>/8</p>
+    </div>
+    <div class="carte profil">
+      <h2 id="profil-nom"></h2>
+      <p id="profil-message"></p>
+    </div>
+    <div class="carte">
+      <h2>3 choses à retenir</h2>
+      <ol>
+        <li>Générer une image demande en moyenne environ 1&nbsp;450 fois plus d'énergie que classer un texte.</li>
+        <li>Une question, c'est peu. Multipliée par tous les utilisateurs, ça pèse lourd&nbsp;: les data centres pourraient consommer autant que le Japon en 2030.</li>
+        <li>Une petite IA bien choisie peut suffire. La bonne IA pour la bonne tâche.</li>
+      </ol>
+    </div>
+    <div class="carte">
+      <p>Utiliser l'IA n'a rien de mal. Le vrai sujet, c'est de l'utiliser pour tout. Avant ton prochain prompt, pose-toi juste une question&nbsp;: est-ce qu'un outil plus simple ferait l'affaire&nbsp;? Retrouve les résultats de notre expérience sur le poster.</p>
+      <button class="bouton" id="rejouer" type="button">Rejouer</button>
+    </div>
+    <details class="carte">
+      <summary>Les sources des chiffres</summary>
+      <ul class="sources">
+        <li>AIE (2025), <a href="https://www.iea.org/reports/energy-and-ai" target="_blank" rel="noopener">Energy and AI</a></li>
+        <li>S. Altman, OpenAI (2025), <a href="https://blog.samaltman.com/the-gentle-singularity" target="_blank" rel="noopener">The Gentle Singularity</a></li>
+        <li>Google (2025), <a href="https://arxiv.org/abs/2508.15734" target="_blank" rel="noopener">Measuring the environmental impact of delivering AI at Google Scale</a></li>
+        <li>Mistral AI (2025), <a href="https://the-decoder.com/mistral-ai-publishes-the-first-comprehensive-life-cycle-assessment-of-a-large-language-model/" target="_blank" rel="noopener">analyse de cycle de vie de Mistral Large 2</a></li>
+        <li>Luccioni, Jernite et Strubell (2024), <a href="https://arxiv.org/abs/2311.16863" target="_blank" rel="noopener">Power Hungry Processing</a></li>
+        <li>Notre expérience&nbsp;: 3 IA testées sur la SMS Spam Collection (2011), 1&nbsp;035 SMS pour la régression logistique et DistilBERT, 200 pour le mini-chatbot, mesures avec CodeCarbon</li>
+      </ul>
+    </details>
+    <p class="footer">Projet IA Green · Anis, Celina et Zina · M1 CNS, Université d’Évry Paris-Saclay</p>
+  </section>
+
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    type: "Situation",
+    texte: "Tu veux savoir combien font 15 % de 40 €. Le réflexe le plus sobre ?",
+    options: ["Demander à un chatbot", "La calculatrice du téléphone", "Demander à deux chatbots, pour être sûr·e"],
+    bonne: 1,
+    bravo: "Bien vu !",
+    rate: "Un chatbot peut le faire, mais une calculatrice suffit largement.",
+    explication: "La calculatrice fait le calcul directement sur ton téléphone. Un chatbot envoie ta question à un data centre, où un très gros modèle écrit la réponse mot par mot. Pour une tâche simple, un outil simple suffit : c'est l'idée de notre poster.",
+    source: ""
+  },
+  {
+    type: "Vrai ou faux",
+    texte: "L'IA, c'est dans le cloud. Donc ça ne consomme presque rien.",
+    options: ["Vrai", "Faux"],
+    bonne: 1,
+    bravo: "Exact. Le cloud fonctionne grâce à des serveurs bien réels.",
+    rate: "Pas tout à fait : les serveurs consomment de l'électricité.",
+    explication: "Le cloud, ce sont des data centres bien réels. En 2024, ils ont consommé environ 415 TWh, soit 1,5 % de l'électricité mondiale. D'ici 2030, l'Agence internationale de l'énergie prévoit 945 TWh : autant que tout le Japon aujourd'hui.",
+    source: "Source : AIE, Energy and AI (2025)"
+  },
+  {
+    type: "QCM",
+    texte: "Selon OpenAI, une question moyenne à ChatGPT consomme à peu près autant que…",
+    options: ["Un four allumé un peu plus d'1 seconde", "Une ampoule allumée toute une nuit", "Une recharge complète de téléphone"],
+    bonne: 0,
+    bravo: "C'est la bonne réponse !",
+    rate: "Non, l'estimation est plus faible.",
+    explication: "Environ 0,34 Wh par question, d'après Sam Altman, le patron d'OpenAI (juin 2025). C'est le chiffre de l'entreprise elle-même, sans méthode publiée. Notre projet ne mesure pas ChatGPT : on compare 3 petites IA qui tournent sur notre propre PC.",
+    source: "Source : S. Altman, « The Gentle Singularity » (2025)"
+  },
+  {
+    type: "QCM",
+    texte: "Une question à Gemini, l'IA de Google, utilise combien d'eau pour refroidir les serveurs ?",
+    options: ["Environ 5 gouttes", "Un verre", "Une bouteille de 50 cL", "Pas une goutte"],
+    bonne: 0,
+    bravo: "Oui, c'est ça !",
+    rate: "La quantité annoncée est faible, mais elle n'est pas nulle.",
+    explication: "Google annonce 0,26 mL par question, soit environ 5 gouttes, et 0,24 Wh (moins de 9 secondes de télé). Mistral, qui compte aussi la fabrication des machines, arrive à 45 mL par réponse. Selon la façon de compter, les chiffres changent énormément.",
+    source: "Sources : Google (2025) ; Mistral AI (2025)"
+  },
+  {
+    type: "Situation",
+    texte: "Pour ta photo de profil, tu génères 10 avatars avec l'IA. En moyenne, quelle tâche consomme le plus d'énergie ?",
+    options: ["Classer un texte (spam ou pas)", "Résumer un texte", "Générer une image"],
+    bonne: 2,
+    bravo: "Oui. La génération d'images demande généralement plus de calcul.",
+    rate: "Non, c'est la génération d'images qui consomme le plus.",
+    explication: "Sur 88 modèles testés, générer une image demande en moyenne environ 1 450 fois plus d'énergie que classer un texte. Avec le modèle le plus gourmand, une seule image ≈ la moitié d'une recharge de smartphone.",
+    source: "Source : Luccioni, Jernite et Strubell (2024)"
+  },
+  {
+    type: "Vrai ou faux",
+    texte: "Plus une IA est grosse, plus elle est forcément meilleure.",
+    options: ["Vrai", "Faux"],
+    bonne: 1,
+    bravo: "Exact. Tout dépend de la tâche à réaliser.",
+    rate: "Non. Un modèle plus grand n'est pas toujours nécessaire.",
+    explication: "Dans notre projet, une régression logistique de seulement 7 670 paramètres classe correctement 97,6 % des SMS de test. Et pour classer des textes, un modèle généraliste émet 8 à 15 fois plus de CO₂ qu'un petit modèle spécialisé.",
+    source: "Sources : notre expérience ; Luccioni et al. (2024)"
+  },
+  {
+    type: "Situation",
+    texte: "Notre IA DistilBERT a plus de 98 % de bonnes réponses à l'examen. On lui envoie : « You have won a free iPhone. Click here to claim it ». Elle répond…",
+    options: ["Arnaque", "Message normal"],
+    bonne: 1,
+    bravo: "Oui, DistilBERT l'a classé comme un message normal.",
+    rate: "Ce SMS était pourtant suspect : DistilBERT ne l'a pas détecté.",
+    explication: "Lors de nos tests, elle l'a classé « normal ». Elle a appris sur des SMS anglais d'environ 2011 (« WINNER!! Call 0906… ») et reconnaît les arnaques d'hier, pas forcément celles d'aujourd'hui. Une IA n'est jamais plus à jour que ses données.",
+    source: "Source : notre expérience (SMS Spam Collection, 2011)"
+  },
+  {
+    type: "QCM",
+    texte: "En un an, Google a rendu une question à Gemini 33 fois moins gourmande en énergie. D'ici 2030, l'électricité consommée par les data centres devrait…",
+    options: ["Baisser", "Rester stable", "Plus que doubler"],
+    bonne: 2,
+    bravo: "C'est ça : c'est ce qu'on appelle l'effet rebond.",
+    rate: "Non, les prévisions annoncent plus qu'un doublement.",
+    explication: "C'est l'effet rebond : plus un service devient efficace, rapide et gratuit, plus on l'utilise. Chaque question coûte moins, mais on en pose tellement plus que le total augmente. L'efficacité seule ne suffit pas, nos usages comptent aussi.",
+    source: "Sources : Google (2025) ; AIE (2025)"
+  }
+];
+
+const PROFILS = [
+  { min: 7, nom: "Expert·e de l'IA responsable", message: "Tu sais que la bonne IA dépend de la tâche, et tu connais les pièges des chiffres. Viens défendre nos résultats devant le poster !" },
+  { min: 5, nom: "Bonnes bases !", message: "Tu connais déjà plusieurs enjeux liés à l'IA. Le poster te permettra de compléter tes réponses." },
+  { min: 3, nom: "Encore quelques découvertes", message: "Tu as quelques bonnes réponses. Certaines idées reçues méritent encore d'être vérifiées." },
+  { min: 0, nom: "À découvrir", message: "Ce quiz est justement là pour découvrir quelques chiffres et mieux comprendre l'impact de l'IA." }
+];
+
+let index = 0;
+let score = 0;
+let repondu = false;
+
+function afficher(id) {
+  document.getElementById("accueil").hidden = id !== "accueil";
+  document.getElementById("jeu").hidden = id !== "jeu";
+  document.getElementById("resultat").hidden = id !== "resultat";
+  window.scrollTo(0, 0);
+}
+
+function demarrer() {
+  index = 0;
+  score = 0;
+  afficher("jeu");
+  poserQuestion();
+}
+
+function poserQuestion() {
+  const q = QUESTIONS[index];
+  repondu = false;
+  document.getElementById("numero").textContent = "Question " + (index + 1) + "/" + QUESTIONS.length;
+  document.getElementById("score").textContent = "Score : " + score;
+  document.getElementById("avance").style.width = (index / QUESTIONS.length * 100) + "%";
+  document.getElementById("type").textContent = q.type;
+  document.getElementById("question").textContent = q.texte;
+  const zone = document.getElementById("reponses");
+  zone.innerHTML = "";
+  q.options.forEach(function (option, k) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "reponse";
+    b.textContent = option;
+    b.addEventListener("click", function () {
+      repondre(k);
+    });
+    zone.appendChild(b);
+  });
+  document.getElementById("retour").hidden = true;
+}
+
+function ajouterEtiquette(b, texte) {
+  const s = document.createElement("span");
+  s.className = "etiquette";
+  s.textContent = texte;
+  b.appendChild(s);
+}
+
+function repondre(k) {
+  if (repondu) {
+    return;
+  }
+  repondu = true;
+  const q = QUESTIONS[index];
+  if (k === q.bonne) {
+    score++;
+  }
+  document.querySelectorAll("#reponses .reponse").forEach(function (b, i) {
+    b.disabled = true;
+    if (i === q.bonne) {
+      b.classList.add("bonne");
+      ajouterEtiquette(b, "Bonne réponse");
+    } else if (i === k) {
+      b.classList.add("fausse");
+      ajouterEtiquette(b, "Ta réponse");
+    }
+  });
+  document.getElementById("score").textContent = "Score : " + score;
+  document.getElementById("avance").style.width = ((index + 1) / QUESTIONS.length * 100) + "%";
+  document.getElementById("reaction").textContent = k === q.bonne ? q.bravo : q.rate;
+  document.getElementById("explication").textContent = q.explication;
+  document.getElementById("source").textContent = q.source;
+  document.getElementById("source").hidden = q.source === "";
+  document.getElementById("suivant").textContent = index === QUESTIONS.length - 1 ? "Voir mon score" : "Question suivante";
+  document.getElementById("retour").hidden = false;
+  document.getElementById("retour").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function suivante() {
+  if (index < QUESTIONS.length - 1) {
+    index++;
+    poserQuestion();
+  } else {
+    montrerResultat();
+  }
+}
+
+function montrerResultat() {
+  afficher("resultat");
+  document.getElementById("score-final").textContent = score;
+  const p = PROFILS.find(function (x) {
+    return score >= x.min;
+  });
+  document.getElementById("profil-nom").textContent = p.nom;
+  document.getElementById("profil-message").textContent = p.message;
+}
+
+document.getElementById("demarrer").addEventListener("click", demarrer);
+document.getElementById("suivant").addEventListener("click", suivante);
+document.getElementById("rejouer").addEventListener("click", demarrer);
+</script>
+
+</body>
+</html>
