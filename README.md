@@ -69,7 +69,7 @@ Chiffres complets : [resultats/comparison.csv](resultats/comparison.csv) et [res
 
 **Prérequis** : Python 3.11 ou plus récent (testé avec Python 3.14.2 sous Windows 11), [Ollama](https://ollama.com/download), quelques Go d'espace libre et une connexion Internet pour télécharger les données et les modèles (environ 700 Mo).
 
-1. Récupérer le projet : bouton **Code → Download ZIP** puis décompresser, ou `git clone` de ce dépôt.
+1. Récupérer le projet : bouton **Code → Download ZIP** puis décompresser, ou `git clone` de ce dépôt .
 2. Dans l'Invite de commandes Windows, depuis le dossier du projet :
    ```
    py -m venv .venv
