@@ -117,15 +117,15 @@ summary{font-weight:750;cursor:pointer;color:var(--green)}
       <span class="surtitre">✦ Quiz · IA frugale</span>
       <h1>Prompt<br>ou pas <span>prompt&nbsp;?</span></h1>
       <p class="intro">On utilise l’IA pour chercher, écrire ou créer. Mais est-ce toujours le meilleur outil&nbsp;?</p>
-      <p>8 petites questions pour tester tes réflexes et découvrir ce qui se cache derrière nos usages.</p>
-      <div class="meta"><span>◷ 2 minutes</span><span>♡ Anonyme</span><span>✦ 8 questions</span></div>
+      <p>7 petites questions pour tester tes réflexes et découvrir ce qui se cache derrière nos usages.</p>
+      <div class="meta"><span>◷ 2 minutes</span><span>♡ Anonyme</span><span>✦ 7 questions</span></div>
       <button class="bouton" id="demarrer" type="button">C’est parti <span aria-hidden="true">→</span></button>
       <p class="petit note">Les chiffres viennent d’études et de sources publiées. Notre projet ne mesure pas ChatGPT : il compare 3 petites IA qui tournent sur notre propre PC.</p>
     </section>
 
   <section id="jeu" hidden>
     <div class="entete">
-      <span id="numero">Question 1/8</span>
+      <span id="numero">Question 1/7</span>
       <span id="score">Score : 0</span>
     </div>
     <div class="barre"><div id="avance"></div></div>
@@ -145,7 +145,7 @@ summary{font-weight:750;cursor:pointer;color:var(--green)}
   <section id="resultat" hidden>
     <div class="carte">
       <p class="surtitre">Ton résultat</p>
-      <p class="score"><span id="score-final">0</span>/8</p>
+      <p class="score"><span id="score-final">0</span>/7</p>
     </div>
     <div class="carte profil">
       <h2 id="profil-nom"></h2>
@@ -242,16 +242,6 @@ const QUESTIONS = [
     source: "Sources : notre expérience ; Luccioni et al. (2024)"
   },
   {
-    type: "Situation",
-    texte: "Notre IA DistilBERT a plus de 98 % de bonnes réponses à l'examen. On lui envoie : « You have won a free iPhone. Click here to claim it ». Elle répond…",
-    options: ["Arnaque", "Message normal"],
-    bonne: 1,
-    bravo: "Oui, DistilBERT l'a classé comme un message normal.",
-    rate: "Ce SMS était pourtant suspect : DistilBERT ne l'a pas détecté.",
-    explication: "Lors de nos tests, elle l'a classé « normal ». Elle a appris sur des SMS anglais d'environ 2011 (« WINNER!! Call 0906… ») et reconnaît les arnaques d'hier, pas forcément celles d'aujourd'hui. Une IA n'est jamais plus à jour que ses données.",
-    source: "Source : notre expérience (SMS Spam Collection, 2011)"
-  },
-  {
     type: "QCM",
     texte: "En un an, Google a rendu une question à Gemini 33 fois moins gourmande en énergie. D'ici 2030, l'électricité consommée par les data centres devrait…",
     options: ["Baisser", "Rester stable", "Plus que doubler"],
@@ -264,9 +254,9 @@ const QUESTIONS = [
 ];
 
 const PROFILS = [
-  { min: 7, nom: "Expert·e de l'IA responsable", message: "Tu sais que la bonne IA dépend de la tâche, et tu connais les pièges des chiffres. Viens défendre nos résultats devant le poster !" },
-  { min: 5, nom: "Bonnes bases !", message: "Tu connais déjà plusieurs enjeux liés à l'IA. Le poster te permettra de compléter tes réponses." },
-  { min: 3, nom: "Encore quelques découvertes", message: "Tu as quelques bonnes réponses. Certaines idées reçues méritent encore d'être vérifiées." },
+  { min: 6, nom: "Expert·e de l'IA responsable", message: "Tu sais que la bonne IA dépend de la tâche, et tu connais les pièges des chiffres. Viens défendre nos résultats devant le poster !" },
+  { min: 4, nom: "Bonnes bases !", message: "Tu connais déjà plusieurs enjeux liés à l'IA. Le poster te permettra de compléter tes réponses." },
+  { min: 2, nom: "Encore quelques découvertes", message: "Tu as quelques bonnes réponses. Certaines idées reçues méritent encore d'être vérifiées." },
   { min: 0, nom: "À découvrir", message: "Ce quiz est justement là pour découvrir quelques chiffres et mieux comprendre l'impact de l'IA." }
 ];
 
